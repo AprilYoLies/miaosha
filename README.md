@@ -2,11 +2,11 @@
 =====
 ## 用到的技术<br>
 
-![](https://github.com/dcg123/miaosha/blob/master/src/main/resources/static/img/technical.png)<br>
+![](https://github.com/AprilYoLies/miaosha/blob/master/src/main/resources/static/img/technical.png)<br>
 
 ## 实现的模块<br>
 
-![](https://github.com/dcg123/miaosha/blob/master/src/main/resources/static/img/function.png)<br>
+![](https://github.com/AprilYoLies/miaosha/blob/master/src/main/resources/static/img/function.png)<br>
 
 ## 集成redis:<br>
 
