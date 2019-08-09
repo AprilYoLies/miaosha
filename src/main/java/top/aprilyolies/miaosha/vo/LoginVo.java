@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 public class LoginVo {
 	
 	@NotNull
-	@IsMobile
+	@IsMobile	// 该注解表明表明需要对该字段进行手机号码规则验证
 	private String mobile;
 	
 	@NotNull

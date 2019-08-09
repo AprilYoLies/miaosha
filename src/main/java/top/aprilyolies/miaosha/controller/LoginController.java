@@ -35,7 +35,7 @@ public class LoginController {
     @ResponseBody
     public Result<String> doLogin(HttpServletResponse response, @Valid LoginVo loginVo) {
     	log.info(loginVo.toString());
-    	//登录
+        // 获取登录信息，先根据缓存比较，没有的话就从数据库查，并缓存，验证密码，成功后生成 token 信息通过 response 返回
     	String token = userService.login(response, loginVo);
     	return Result.success(token);
     }

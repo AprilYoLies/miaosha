@@ -52,11 +52,11 @@ public class MiaoshaUserService {
 		MiaoshaUser toBeUpdate = new MiaoshaUser();
 		toBeUpdate.setId(id);
 		toBeUpdate.setPassword(MD5Util.formPassToDBPass(formPass, user.getSalt()));
-		miaoshaUserDao.update(toBeUpdate);
+		miaoshaUserDao.update(toBeUpdate);	// 先更新数据库信息
 		//处理缓存
-		redisService.delete(MiaoshaUserKey.getById, ""+id);
+		redisService.delete(MiaoshaUserKey.getById, ""+id);	// 再删除缓存信息
 		user.setPassword(toBeUpdate.getPassword());
-		redisService.set(MiaoshaUserKey.token, token, user);
+		redisService.set(MiaoshaUserKey.token, token, user);	// 更新缓存信息
 		return true;
 	}
 

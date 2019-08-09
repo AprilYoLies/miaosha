@@ -47,7 +47,7 @@ public class GoodsController {
 	 * 5000 * 10
 	 * QPS:2884, load:5 
 	 * */
-    @RequestMapping(value="/to_list", produces="text/html")
+    @RequestMapping(value="/to_list")
     @ResponseBody	// 从数据库中查询秒杀商品信息，优先从缓存中获取秒杀页面，不存在的话就从数据库中查询，然后手动进行渲染后缓存
     public String list(HttpServletRequest request, HttpServletResponse response, Model model,MiaoshaUser user) {
     	model.addAttribute("user", user);
@@ -68,7 +68,7 @@ public class GoodsController {
     	}
     	return html;
     }
-    
+    // 与下边的 detail 方法一致，只是多了一个缓存静态页面的功能，因为缓存了页面，所以库存量信息是不准确的
     @RequestMapping(value="/to_detail2/{goodsId}",produces="text/html")
     @ResponseBody
     public String detail2(HttpServletRequest request, HttpServletResponse response, Model model,MiaoshaUser user,

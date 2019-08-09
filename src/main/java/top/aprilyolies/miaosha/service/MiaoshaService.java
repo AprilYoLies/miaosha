@@ -30,11 +30,11 @@ public class MiaoshaService {
 	@Autowired
 	RedisService redisService;
 
-
+	// 修改数据库中的库存信息，创建订单信息，包括写入数据库和写入缓存两点
 	@Transactional
 	public OrderInfo miaosha(MiaoshaUser user, GoodsVo goods) {
-		//减库存 下订单 写入秒杀订单
-		boolean success = goodsService.reduceStock(goods);
+		// 减库存 下订单 写入秒杀订单
+		boolean success = goodsService.reduceStock(goods);	// 将秒杀商品的库存数量减一，修改的是数据库的记录
 		if (success){
 			//order_info maiosha_order
 			return orderService.createOrder(user, goods);

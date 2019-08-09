@@ -17,7 +17,7 @@ import java.util.List;
  * 全局的异常处理器
  */
 public class GlobalExceptionHandler {
-	@ExceptionHandler(value=Exception.class)
+	@ExceptionHandler(value=Exception.class)	// 该注解能够能 spring 容器解析，然后该方法就会被用来处理全局异常
 	public Result<String> exceptionHandler(HttpServletRequest request, Exception e){
 		e.printStackTrace();
 		if(e instanceof GlobalException) {

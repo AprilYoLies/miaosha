@@ -21,11 +21,11 @@ public class GoodsService {
 	public GoodsVo getGoodsVoByGoodsId(long goodsId) {
 		return goodsDao.getGoodsVoByGoodsId(goodsId);
 	}
-
+	// 将秒杀商品的库存数量减一
 	public boolean reduceStock(GoodsVo goods) {
 		MiaoshaGoods g = new MiaoshaGoods();
 		g.setGoodsId(goods.getId());
-		int ret=goodsDao.reduceStock(g);
+		int ret=goodsDao.reduceStock(g);	// 将秒杀商品的库存数量减一
 		return ret>0;
 	}
 	

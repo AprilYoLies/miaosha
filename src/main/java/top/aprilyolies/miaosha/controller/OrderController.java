@@ -40,7 +40,7 @@ public class OrderController {
     	if(user == null) {
     		return Result.error(CodeMsg.SESSION_ERROR);
     	}
-    	OrderInfo order = orderService.getOrderById(orderId);
+    	OrderInfo order = orderService.getOrderById(orderId);	// 根据 id 查询数据库中的订单信息
     	if(order == null) {
     		return Result.error(CodeMsg.ORDER_NOT_EXIST);
     	}
