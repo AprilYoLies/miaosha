@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class ValidatorUtil {
 	
 	private static final Pattern mobile_pattern = Pattern.compile("1\\d{10}");
-	
+	// 通过正则表达式完成手机号码的校验
 	public static boolean isMobile(String src) {
 		if(StringUtils.isEmpty(src)) {
 			return false;

@@ -16,7 +16,7 @@ public class MQSender {
     private static Logger log=LoggerFactory.getLogger(MQReceiver.class);
     @Autowired
     AmqpTemplate amqpTemplate;
-    public void send(Object message){
+    public void send(Object message){   // 测试方法，无关紧要
         String msg=RedisService.beanToString(message);
         log.info("send:"+msg);
         amqpTemplate.convertAndSend(MQConfig.QUEUE,msg);
