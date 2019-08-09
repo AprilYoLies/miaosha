@@ -48,7 +48,7 @@ public class GoodsController {
 	 * QPS:2884, load:5 
 	 * */
     @RequestMapping(value="/to_list", produces="text/html")
-    @ResponseBody
+    @ResponseBody	// 从数据库中查询秒杀商品信息，优先从缓存中获取秒杀页面，不存在的话就从数据库中查询，然后手动进行渲染后缓存
     public String list(HttpServletRequest request, HttpServletResponse response, Model model,MiaoshaUser user) {
     	model.addAttribute("user", user);
     	//取缓存
@@ -59,12 +59,12 @@ public class GoodsController {
     	List<GoodsVo> goodsList = goodsService.listGoodsVo();
     	model.addAttribute("goodsList", goodsList);
 //    	 return "goods_list";
-    	SpringWebContext ctx = new SpringWebContext(request,response,
+    	SpringWebContext ctx = new SpringWebContext(request,response,	// 手动渲染页面的 context
     			request.getServletContext(),request.getLocale(), model.asMap(), applicationContext );
     	//手动渲染
-    	html = thymeleafViewResolver.getTemplateEngine().process("goods_list", ctx);
+    	html = thymeleafViewResolver.getTemplateEngine().process("goods_list", ctx);	// 手动渲染页面
     	if(!StringUtils.isEmpty(html)) {
-    		redisService.set(GoodsKey.getGoodsList, "", html);
+    		redisService.set(GoodsKey.getGoodsList, "", html);	// 将页面信息也缓存到 redis 中
     	}
     	return html;
     }
@@ -112,7 +112,7 @@ public class GoodsController {
     	}
     	return html;
     }
-    
+    // 秒杀商品详情，根据秒杀的开始和结束时间，返回不同的状态
     @RequestMapping(value="/detail/{goodsId}")
     @ResponseBody
     public Result<GoodsDetailVo> detail(HttpServletRequest request, HttpServletResponse response, Model model, MiaoshaUser user,

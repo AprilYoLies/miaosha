@@ -13,6 +13,9 @@ import java.util.List;
 
 @ControllerAdvice
 @ResponseBody
+/**
+ * 全局的异常处理器
+ */
 public class GlobalExceptionHandler {
 	@ExceptionHandler(value=Exception.class)
 	public Result<String> exceptionHandler(HttpServletRequest request, Exception e){

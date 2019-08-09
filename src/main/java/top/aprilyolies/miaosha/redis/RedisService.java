@@ -30,7 +30,7 @@ public class RedisService {
 	}
 	
 	/**
-	 * 设置对象
+	 * 设置对象，分为持有型 key 和限时 key
 	 * */
 	public <T> boolean set(KeyPrefix prefix, String key,  T value) {
 		 Jedis jedis = null;
@@ -44,9 +44,9 @@ public class RedisService {
 			 String realKey  = prefix.getPrefix() + key;
 			 int seconds =  prefix.expireSeconds();
 			 if(seconds <= 0) {
-				 jedis.set(realKey, str);
+				 jedis.set(realKey, str);	// 不会过期
 			 }else {
-				 jedis.setex(realKey, seconds, str);
+				 jedis.setex(realKey, seconds, str);	// 超时或过期
 			 }
 			 return true;
 		 }finally {

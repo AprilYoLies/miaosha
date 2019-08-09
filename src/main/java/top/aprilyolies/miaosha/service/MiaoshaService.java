@@ -44,7 +44,7 @@ public class MiaoshaService {
 			return null;
 		}
 	}
-
+	// 获取自己的秒杀结果，即订单信息，缓存在 redis 中，即 OrderKey:moug15674400520_1 对应的 value 信息
 	public long getMiaoshaResult(Long userId, long goodsId) {
 		MiaoshaOrder order = orderService.getMiaoshaOrderByUserIdGoodsId(userId, goodsId);
 		if (order!=null){//秒杀成功
@@ -68,7 +68,7 @@ public class MiaoshaService {
 	}
 
 	/**
-	 * 检查验证码是否正确
+	 * 检查验证码是否正确，从缓存中获取验证的结果，然后和用户输入的结果进行比对
 	 * @param user
 	 * @param goodsId
 	 * @param verifyCode
@@ -77,7 +77,7 @@ public class MiaoshaService {
 	public boolean checkVerifyCode(MiaoshaUser user, long goodsId, int verifyCode) {
 		if (user==null||goodsId<0){
 			return false;
-		}
+		}	// 获取缓存中的验证码结果值
 		Integer codeOld=redisService.get(MiaoshaKey.getMiaoshaVerifyCode,user.getId()+","+goodsId,Integer.class);
 		if (codeOld==null||codeOld-verifyCode!=0){
 			return false;
@@ -86,7 +86,7 @@ public class MiaoshaService {
 	}
 
 	/**
-	 * 秒杀开始前获取path 用于请求秒杀接口对比验证
+	 * 秒杀开始前获取path 用于请求秒杀接口对比验证，秒杀路劲的缓存格式如 MiaoshaKey:mp15674400520_1 -> 69f65225b8d3531906f13f60bae4df7d
 	 * @param user
 	 * @param goodsId
 	 * @return
@@ -96,12 +96,12 @@ public class MiaoshaService {
 			return null;
 		}
 		String str= MD5Util.md5(UUIDUtil.uuid()+"123456");
-		redisService.set(MiaoshaKey.getMiaoshaPath, ""+user.getId() + "_"+ goodsId, str);
+		redisService.set(MiaoshaKey.getMiaoshaPath, ""+user.getId() + "_"+ goodsId, str);	// 这里是缓存用户的秒杀路径
 		return str;
 	}
 
 	/**
-	 * 生产验证码
+	 * 生产验证码，将验证码的结果存放到了缓存中，格式为 MiaoshaKey:vc15674400520,1（商品 id） -> 1
 	 * @param user
 	 * @param goodsId
 	 * @return
@@ -130,18 +130,18 @@ public class MiaoshaService {
 			g.drawOval(x, y, 0, 0);
 		}
 		// generate a random code
-		String verifyCode = generateVerifyCode(rdm);
+		String verifyCode = generateVerifyCode(rdm);	// 创建验证字符串，+ - * 随机组合
 		g.setColor(new Color(0, 100, 0));
 		g.setFont(new Font("Candara", Font.BOLD, 24));
 		g.drawString(verifyCode, 8, 24);
 		g.dispose();
 		//把验证码存到redis中
-		int rnd = calc(verifyCode);
-		redisService.set(MiaoshaKey.getMiaoshaVerifyCode, user.getId()+","+goodsId, rnd);
+		int rnd = calc(verifyCode);	// 表达式计算
+		redisService.set(MiaoshaKey.getMiaoshaVerifyCode, user.getId()+","+goodsId, rnd);	// MiaoshaKey:vc15674400520,1 -> 1
 		//输出图片
 		return image;
 	}
-
+	// 表达式计算
 	private int calc(String exp) {
 		try {
 			ScriptEngineManager manager = new ScriptEngineManager();
@@ -155,7 +155,7 @@ public class MiaoshaService {
 
 	private static char[] ops = new char[] {'+', '-', '*'};
 	/**
-	 * + - *
+	 * + - *，创建验证字符串，+ - * 随机组合
 	 * */
 	private String generateVerifyCode(Random rdm) {
 		int num1 = rdm.nextInt(10);

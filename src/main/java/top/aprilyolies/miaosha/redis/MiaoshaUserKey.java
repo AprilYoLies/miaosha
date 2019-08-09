@@ -1,7 +1,7 @@
 package top.aprilyolies.miaosha.redis;
 
 public class MiaoshaUserKey extends BasePrefix {
-
+	// token 过期时间，两天
 	public static final int TOKEN_EXPIRE = 3600*24 * 2;
 	private MiaoshaUserKey(int expireSeconds, String prefix) {
 		super(expireSeconds, prefix);

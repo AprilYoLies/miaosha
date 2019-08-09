@@ -15,7 +15,7 @@ public class MD5Util {
 		System.out.println(str);
 		return md5(str);
 	}
-	
+	// 加盐
 	public static String formPassToDBPass(String formPass, String salt) {
 		String str = ""+salt.charAt(0)+salt.charAt(2) + formPass +salt.charAt(5) + salt.charAt(4);
 		return md5(str);

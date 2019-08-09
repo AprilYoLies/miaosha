@@ -32,7 +32,7 @@ public class OrderController {
 	
 	@Autowired
 	GoodsService goodsService;
-	
+	// 根据订单 id 查询订单信息，然后根据其中的商品 id 查询商品信息，直接返回订单和商品信息
     @RequestMapping("/detail")
     @ResponseBody
     public Result<OrderDetailVo> info(Model model, MiaoshaUser user,
@@ -45,7 +45,7 @@ public class OrderController {
     		return Result.error(CodeMsg.ORDER_NOT_EXIST);
     	}
     	long goodsId = order.getGoodsId();
-    	GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
+    	GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);	// 根据商品 id 获取商品详情
     	OrderDetailVo vo = new OrderDetailVo();
     	vo.setOrder(order);
     	vo.setGoods(goods);

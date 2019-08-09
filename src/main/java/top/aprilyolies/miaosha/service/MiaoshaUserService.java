@@ -29,7 +29,7 @@ public class MiaoshaUserService {
 	RedisService redisService;
 	
 	public MiaoshaUser getById(long id) {
-		//取缓存
+		//取缓存，看缓存里边是否有用户信息
 		MiaoshaUser user = redisService.get(MiaoshaUserKey.getById, ""+id, MiaoshaUser.class);
 		if(user != null) {
 			return user;
@@ -37,7 +37,7 @@ public class MiaoshaUserService {
 		//取数据库
 		user = miaoshaUserDao.getById(id);
 		if(user != null) {
-			redisService.set(MiaoshaUserKey.getById, ""+id, user);
+			redisService.set(MiaoshaUserKey.getById, ""+id, user);	// 缓存用户信息
 		}
 		return user;
 	}
@@ -60,7 +60,7 @@ public class MiaoshaUserService {
 		return true;
 	}
 
-
+	// 根据 token 从缓存中获取用户信息，如果缓存中的用户信息已经过期，那么将不会获取到用户信息，如果获取到用户信息，将会刷新缓存过期时间
 	public MiaoshaUser getByToken(HttpServletResponse response, String token) {
 		if(StringUtils.isEmpty(token)) {
 			return null;
@@ -73,14 +73,14 @@ public class MiaoshaUserService {
 		return user;
 	}
 	
-
+	// 获取登录信息，先根据缓存比较，没有的话就从数据库查，并缓存，验证密码，成功后生成 token 信息通过 response 返回
 	public String login(HttpServletResponse response, LoginVo loginVo) {
 		if(loginVo == null) {
 			throw new GlobalException(CodeMsg.SERVER_ERROR);
 		}
 		String mobile = loginVo.getMobile();
 		String formPass = loginVo.getPassword();
-		//判断手机号是否存在
+		//判断手机号是否存在，优先从缓存中查询，无结果的话就到数据库中，然后将结果缓存
 		MiaoshaUser user = getById(Long.parseLong(mobile));
 		if(user == null) {
 			throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
@@ -88,20 +88,20 @@ public class MiaoshaUserService {
 		//验证密码
 		String dbPass = user.getPassword();
 		String saltDB = user.getSalt();
-		String calcPass = MD5Util.formPassToDBPass(formPass, saltDB);
+		String calcPass = MD5Util.formPassToDBPass(formPass, saltDB);	// 表格密码加盐后再进行 md5 加密
 		if(!calcPass.equals(dbPass)) {
 			throw new GlobalException(CodeMsg.PASSWORD_ERROR);
 		}
 		//生成cookie
-		String token	 = UUIDUtil.uuid();
-		addCookie(response, token, user);
+		String token	 = UUIDUtil.uuid();	// 通过 cookie 进行用户追踪
+		addCookie(response, token, user);	// 为响应添加 cookie
 		return token;
 	}
-	
+	// 为响应添加 cookie，同时将 token 信息缓存到 redis 中，token -> user
 	private void addCookie(HttpServletResponse response, String token, MiaoshaUser user) {
-		redisService.set(MiaoshaUserKey.token, token, user);
+		redisService.set(MiaoshaUserKey.token, token, user);	// 将 token 信息也保存到 redis 中，token -> user
 		Cookie cookie = new Cookie(COOKI_NAME_TOKEN, token);
-		cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());
+		cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());	// 设置 token 的过期时间
 		cookie.setPath("/");
 		response.addCookie(cookie);
 	}

@@ -21,9 +21,9 @@ public class MQSender {
         log.info("send:"+msg);
         amqpTemplate.convertAndSend(MQConfig.QUEUE,msg);
     }
-
+    // 将秒杀信息放到 mq 中，miaosha.queue
     public void sendMiaoshaMessage(MiaoshaMessage mm) {
-        String msg = RedisService.beanToString(mm);
+        String msg = RedisService.beanToString(mm); // {"goodsid":1,"user":{"id":15674400520,"lastLoginDate":1565250497000,"loginCount":0,"nickname":"90後","password":"99f786f83a478faa391a527df047ad3e","registerDate":1565250493000,"salt":"abcdef"}}
         log.info("send message:"+msg);
 		amqpTemplate.convertAndSend(MQConfig.MIAOSHA_QUEUE, msg);
     }

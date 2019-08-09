@@ -21,11 +21,11 @@ public class OrderService {
 	
 	@Autowired
     RedisService redisService;
-	
+	// 获取 OrderKey:moug15674400520_1 对应的 value 信息
 	public MiaoshaOrder getMiaoshaOrderByUserIdGoodsId(long userId, long goodsId) {
 		//return orderDao.getMiaoshaOrderByUserIdGoodsId(userId, goodsId);
 		return redisService.get(OrderKey.getMiaoshaOrderByUidGid, ""+userId+"_"+goodsId, MiaoshaOrder.class);
-	}
+	}	// 获取 OrderKey:moug15674400520_1 对应的 value 信息
 	
 	public OrderInfo getOrderById(long orderId) {
 		return orderDao.getOrderById(orderId);

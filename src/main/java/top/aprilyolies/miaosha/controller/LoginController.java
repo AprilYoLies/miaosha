@@ -25,12 +25,12 @@ public class LoginController {
 	
 	@Autowired
 	RedisService redisService;
-	
+	// 跳转用户登录界面
     @RequestMapping("/to_login")
     public String toLogin() {
         return "login";
     }
-    
+    // 用户登录处理
     @RequestMapping("/do_login")
     @ResponseBody
     public Result<String> doLogin(HttpServletResponse response, @Valid LoginVo loginVo) {
