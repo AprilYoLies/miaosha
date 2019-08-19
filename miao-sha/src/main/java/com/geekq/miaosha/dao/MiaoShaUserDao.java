@@ -17,7 +17,7 @@ public interface MiaoShaUserDao {
     public void update(MiaoshaUser toBeUpdate);
 
 
-    @Insert("insert into miaosha_user (id , nickname ,password , salt ,head,register_date,last_login_date)value (#{id},#{nickname},#{password},#{salt},#{head},#{registerDate},#{lastLoginDate}) ")
+    @Insert("insert into miaosha_user (nickname ,password , salt ,head,register_date,last_login_date)value (#{nickname},#{password},#{salt},#{head},#{registerDate},#{lastLoginDate}) ")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     public void insertMiaoShaUser(MiaoshaUser miaoshaUser);
 

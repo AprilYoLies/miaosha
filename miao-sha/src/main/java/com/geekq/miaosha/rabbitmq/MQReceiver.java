@@ -24,22 +24,22 @@ import java.io.IOException;
 public class MQReceiver {
 
 		private static Logger log = LoggerFactory.getLogger(MQReceiver.class);
-		
+
 		@Autowired
 		RedisService redisService;
-		
+
 		@Autowired
 		GoodsService goodsService;
-		
+
 		@Autowired
 		OrderService orderService;
-		
+
 		@Autowired
 		MiaoshaService miaoshaService;
 
 		@Autowired
 		MiaoShaMessageService messageService ;
-		
+
 		@RabbitListener(queues=MQConfig.MIAOSHA_QUEUE)
 		public void receive(String message) {
 			log.info("receive message:"+message);
