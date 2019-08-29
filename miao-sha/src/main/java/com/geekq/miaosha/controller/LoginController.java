@@ -28,7 +28,7 @@ public class LoginController {
     private MiaoShaUserService userService;
     @Reference
     @RequestMapping("/to_login")
-    public String tologin(LoginVo loginVo, Model model) {
+    public String tologin(LoginVo loginVo, Model model) {   // 前往登录页面，返回过程会统计站点访问次数
         logger.info(loginVo.toString());
         //未完成
           RedisLua.vistorCount(COUNTLOGIN);
@@ -37,13 +37,13 @@ public class LoginController {
         model.addAttribute("count",count);
         return "login";
     }
-
+    // 优先查看缓存中是否有用户信息，如果有的话，就获取，否则查询数据库，并更新缓存，比对密码，然后生成用户的 token 并缓存，同时将该 token 通过 cookie 返回给用户
     @RequestMapping("/do_login")
     @ResponseBody
     public ResultGeekQ<Boolean> dologin(HttpServletResponse response, @Valid LoginVo loginVo) {
         ResultGeekQ<Boolean> result = ResultGeekQ.build();
         logger.info(loginVo.toString());
-        userService.login(response, loginVo);
+        userService.login(response, loginVo);   // 优先查看缓存中是否有用户信息，如果有的话，就获取，否则查询数据库，并更新缓存，比对密码，然后生成用户的 token 并缓存，同时将该 token 通过 cookie 返回给用户
         return result;
     }
 

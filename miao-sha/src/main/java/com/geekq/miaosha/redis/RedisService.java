@@ -60,7 +60,7 @@ public class RedisService {
 	}
 
 	/**
-	 * 获取当个对象
+	 * 获取当个对象，从缓存中获取用户信息
 	 * */
 	public <T> T get(KeyPrefix prefix, String key,  Class<T> clazz) {
 		 Jedis jedis = null;
@@ -107,7 +107,7 @@ public class RedisService {
         return result;
     }
 	/**
-	 * 设置对象
+	 * 设置对象，对象缓存
 	 * */
 	public <T> boolean set(KeyPrefix prefix, String key,  T value) {
 		 Jedis jedis = null;

@@ -36,21 +36,21 @@ public class OrderController {
 	GoodsService goodsService;
 	
     @RequestMapping("/detail")
-    @ResponseBody
+    @ResponseBody	// 根据订单号查询订单信息，返回
     public ResultGeekQ<OrderDetailVo> info(Model model, MiaoshaUser user,
 									  @RequestParam("orderId") long orderId) {
 		ResultGeekQ<OrderDetailVo> result = ResultGeekQ.build();
 		if (user == null) {
 			result.withError(SESSION_ERROR.getCode(), SESSION_ERROR.getMessage());
 			return result;
-		}
+		}	// 查询数据库中的订单信息
     	OrderInfo order = orderService.getOrderById(orderId);
     	if(order == null) {
 			result.withError(ORDER_NOT_EXIST.getCode(), ORDER_NOT_EXIST.getMessage());
 			return result;
     	}
     	long goodsId = order.getGoodsId();
-    	GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
+    	GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);	// 查询商品信息
     	OrderDetailVo vo = new OrderDetailVo();
     	vo.setOrder(order);
     	vo.setGoods(goods);

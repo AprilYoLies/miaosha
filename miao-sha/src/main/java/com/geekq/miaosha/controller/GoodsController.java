@@ -51,16 +51,16 @@ public class GoodsController extends BaseController {
      * QPS:2884, load:5
      * */
     @RequestMapping(value="/to_list", produces="text/html")
-    @ResponseBody
+    @ResponseBody   // 获取秒杀商品信息，静态化处理，提高访问速度
     public String list(HttpServletRequest request, HttpServletResponse response, Model model, MiaoshaUser user) {
         model.addAttribute("user", user);
         List<GoodsVo> goodsList = goodsService.listGoodsVo();
         model.addAttribute("goodsList", goodsList);
-        return render(request,response,model,"goods_list",GoodsKey.getGoodsList,"");
+        return render(request,response,model,"goods_list",GoodsKey.getGoodsList,"");    // 手动渲染商品秒杀页面，进行缓存，一分钟过期，然后将页面返回给客户端
     }
 
     @RequestMapping(value="/to_detail2/{goodsId}",produces="text/html")
-    @ResponseBody
+    @ResponseBody   // 也就是获取商品的详细信息，但是这里对页面进行了缓存
     public String detail2(HttpServletRequest request, HttpServletResponse response, Model model,MiaoshaUser user,
                           @PathVariable("goodsId")long goodsId) {
         model.addAttribute("user", user);

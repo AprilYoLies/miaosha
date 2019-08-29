@@ -26,7 +26,7 @@ public class OrderService {
 
 	@Autowired
 	private RedisService redisService ;
-	
+	// 看用户是否已经秒杀过该商品了
 	public MiaoshaOrder getMiaoshaOrderByUserIdGoodsId(long userId, long goodsId) {
 		return	redisService.get(OrderKey.getMiaoshaOrderByUidGid,""+userId+"_"+goodsId,MiaoshaOrder.class) ;
 	}

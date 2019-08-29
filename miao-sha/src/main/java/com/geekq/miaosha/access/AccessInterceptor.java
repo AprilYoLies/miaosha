@@ -46,7 +46,7 @@ public class AccessInterceptor  extends HandlerInterceptorAdapter{
 			//方便mybatis 测试
 //			if(hm.getMethod().getName().startsWith("test")){
 //				return true;
-//			}
+//			}	// 获取 cookie 或者请求参数中的 token 信息，据此判断用户是否登录
 			MiaoshaUser user = getUser(request, response);
 			UserContext.setUser(user);
 			AccessLimit accessLimit = hm.getMethodAnnotation(AccessLimit.class);
@@ -94,7 +94,7 @@ public class AccessInterceptor  extends HandlerInterceptorAdapter{
 		out.flush();
 		out.close();
 	}
-
+	// 获取 cookie 或者请求参数中的 token 信息，据此判断用户是否登录
 	private MiaoshaUser getUser(HttpServletRequest request, HttpServletResponse response) {
 		String paramToken = request.getParameter(MiaoShaUserService.COOKIE_NAME_TOKEN);
 		String cookieToken = getCookieValue(request, MiaoShaUserService.COOKIE_NAME_TOKEN);
@@ -102,7 +102,7 @@ public class AccessInterceptor  extends HandlerInterceptorAdapter{
 			return null;
 		}
 		String token = StringUtils.isEmpty(paramToken)?cookieToken:paramToken;
-		return userService.getByToken(response, token);
+		return userService.getByToken(response, token);	// 通过 token 获取用户信息，然后将 token 信息添加到 cookie 中
 	}
 
 	private String getCookieValue(HttpServletRequest request, String cookiName) {

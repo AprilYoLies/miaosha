@@ -41,7 +41,7 @@ public class MiaoShaUserService {
     @Autowired
     private MQSender sender ;
 
-
+    // 通过 token 获取用户信息，然后将 token 信息添加到 cookie 中
     public MiaoshaUser getByToken(HttpServletResponse response , String token) {
 
         if(StringUtils.isEmpty(token)){
@@ -49,12 +49,12 @@ public class MiaoShaUserService {
         }
         MiaoshaUser user =redisService.get(MiaoShaUserKey.token,token,MiaoshaUser.class) ;
         if(user!=null) {
-            addCookie(response, token, user);
+            addCookie(response, token, user);    // 对象缓存，设置 cookie
         }
         return user ;
 
     }
-
+    // 优先从缓存中获取用户信息，没有的话就数据库中查询，然后放入缓存中
     public MiaoshaUser getByNickName(String nickName) {
         //取缓存
         MiaoshaUser user = redisService.get(MiaoShaUserKey.getByNickName, ""+nickName, MiaoshaUser.class);
@@ -63,7 +63,7 @@ public class MiaoShaUserService {
         }
         //取数据库
         user = miaoShaUserDao.getByNickname(nickName);
-        if(user != null) {
+        if(user != null) {  // 查询到了以后，更新缓存
             redisService.set(MiaoShaUserKey.getByNickName, ""+nickName, user);
         }
         return user;
@@ -113,7 +113,7 @@ public class MiaoShaUserService {
         }
         return true;
     }
-
+    // 优先查看缓存中是否有用户信息，如果有的话，就获取，否则查询数据库，并更新缓存，比对密码，然后生成用户的 token 并缓存，同时将该 token 通过 cookie 返回给用户
     public boolean login(HttpServletResponse response , LoginVo loginVo) {
         if(loginVo ==null){
             throw  new GlobleException(SYSTEM_ERROR);
@@ -121,7 +121,7 @@ public class MiaoShaUserService {
 
         String mobile =loginVo.getMobile();
         String password =loginVo.getPassword();
-        MiaoshaUser user = getByNickName(mobile);
+        MiaoshaUser user = getByNickName(mobile);   // 优先从缓存中获取用户信息，没有的话就数据库中查询，然后放入缓存中
         if(user == null) {
             throw new GlobleException(MOBILE_NOT_EXIST);
         }
@@ -163,9 +163,9 @@ public class MiaoShaUserService {
         String token= UUIDUtil.uuid();
         addCookie(response, token, user);
         return token ;
-    }
+    }   // 对象缓存，设置 cookie
     private void addCookie(HttpServletResponse response, String token, MiaoshaUser user) {
-        redisService.set(MiaoShaUserKey.token, token, user);
+        redisService.set(MiaoShaUserKey.token, token, user);    // 对象缓存
         Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
         //设置有效期
         cookie.setMaxAge(MiaoShaUserKey.token.expireSeconds());

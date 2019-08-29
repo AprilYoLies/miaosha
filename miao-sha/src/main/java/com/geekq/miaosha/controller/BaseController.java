@@ -28,7 +28,7 @@ public class BaseController {
     @Autowired
     RedisService redisService;
 
-
+    // 手动渲染商品秒杀页面，进行缓存，一分钟过期，然后将页面返回给客户端
     public String render(HttpServletRequest request, HttpServletResponse response, Model model, String tplName, KeyPrefix prefix, String key) {
         if(!pageCacheEnable) {
             return tplName;
@@ -46,10 +46,10 @@ public class BaseController {
         if(!StringUtils.isEmpty(html)) {
             redisService.set(prefix, key, html);
         }
-        out(response, html);
+        out(response, html);    // 将手动渲染的页面，返回给客户端
         return null;
     }
-
+    // 将手动渲染的页面，返回给客户端
     public static void out(HttpServletResponse res, String html){
         res.setContentType("text/html");
         res.setCharacterEncoding("UTF-8");

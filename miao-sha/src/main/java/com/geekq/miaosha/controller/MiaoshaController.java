@@ -64,7 +64,7 @@ public class MiaoshaController implements InitializingBean {
      */
     @AccessLimit(seconds = 5, maxCount = 5, needLogin = true)
     @RequestMapping(value="/{path}/do_miaosha", method= RequestMethod.POST)
-    @ResponseBody
+    @ResponseBody   // 验证用户的秒杀链接，如果匹配的话，就看用户是否已经秒杀过商品，没有秒杀过的话，就看是否已经秒杀完毕，没有的话就进行秒杀，然后将秒杀信息放到消息队列，也就是商品 id 和用户信息
     public ResultGeekQ<Integer> miaosha(Model model, MiaoshaUser user, @PathVariable("path") String path,
                                         @RequestParam("goodsId") long goodsId) {
         ResultGeekQ<Integer> result = ResultGeekQ.build();
@@ -100,7 +100,7 @@ public class MiaoshaController implements InitializingBean {
             result.withError(MIAO_SHA_OVER.getCode(), MIAO_SHA_OVER.getMessage());
             return result;
         }
-        //预见库存
+        //预见库存，将 redis 中的库存信息减 1
         Long stock = redisService.decr(GoodsKey.getMiaoshaGoodsStock, "" + goodsId);
         if (stock < 0) {
             localOverMap.put(goodsId, true);
@@ -122,7 +122,7 @@ public class MiaoshaController implements InitializingBean {
      */
     @AccessLimit(seconds = 5, maxCount = 5, needLogin = true)
     @RequestMapping(value = "/result", method = RequestMethod.GET)
-    @ResponseBody
+    @ResponseBody   // 就是查看 redis 中是否有当前用户对于当前商品的订单信息，如果有的话，就返回当前的 order 信息（order 由另外一个服务完成）
     public ResultGeekQ<Long> miaoshaResult(Model model, MiaoshaUser user,
                                            @RequestParam("goodsId") long goodsId) {
         ResultGeekQ<Long> result = ResultGeekQ.build();
@@ -138,7 +138,7 @@ public class MiaoshaController implements InitializingBean {
 
     @AccessLimit(seconds = 5, maxCount = 5, needLogin = true)
     @RequestMapping(value = "/path", method = RequestMethod.GET)
-    @ResponseBody
+    @ResponseBody   // 校验用户的验证码结果，然后为其和对应商品生成秒杀路径
     public ResultGeekQ<String> getMiaoshaPath(HttpServletRequest request, MiaoshaUser user,
                                               @RequestParam("goodsId") long goodsId,
                                               @RequestParam(value = "verifyCode", defaultValue = "0") int verifyCode
@@ -147,7 +147,7 @@ public class MiaoshaController implements InitializingBean {
         if (user == null) {
             result.withError(SESSION_ERROR.getCode(), SESSION_ERROR.getMessage());
             return result;
-        }
+        }   // 校验用户输入的验证码，同时删除验证码结果
         boolean check = miaoshaService.checkVerifyCode(user, goodsId, verifyCode);
         if (!check) {
             result.withError(REQUEST_ILLEGAL.getCode(), REQUEST_ILLEGAL.getMessage());
@@ -177,7 +177,7 @@ public class MiaoshaController implements InitializingBean {
         }
     }
     @RequestMapping(value = "/verifyCode", method = RequestMethod.GET)
-    @ResponseBody
+    @ResponseBody   // 用户获取验证码，生成验证码，将验证码的结果缓存到 redis 中
     public ResultGeekQ<String> getMiaoshaVerifyCod(HttpServletResponse response, MiaoshaUser user,
                                               @RequestParam("goodsId") long goodsId) {
         ResultGeekQ<String> result = ResultGeekQ.build();
@@ -203,7 +203,7 @@ public class MiaoshaController implements InitializingBean {
      *
      * @throws Exception
      */
-    @Override
+    @Override   // 内存标记
     public void afterPropertiesSet() throws Exception {
         List<GoodsVo> goodsList = goodsService.listGoodsVo();
         if (goodsList == null) {

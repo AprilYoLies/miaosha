@@ -64,7 +64,7 @@ public class MiaoshaService {
 	private boolean getGoodsOver(long goodsId) {
 		return redisService.exists(MiaoshaKey.isGoodsOver, ""+goodsId);
 	}
-
+	// 看用于提供的秒杀路径是否匹配
 	public boolean checkPath(MiaoshaUser user, long goodsId, String path) {
 		if(user == null || path == null) {
 			return false;
@@ -72,7 +72,7 @@ public class MiaoshaService {
 		String pathOld = redisService.get(MiaoshaKey.getMiaoshaPath, ""+user.getNickname() + "_"+ goodsId, String.class);
 		return path.equals(pathOld);
 	}
-
+	// 创建用户专属的秒杀链接，一个用户和一个商品对应一个链接
 	public String createMiaoshaPath(MiaoshaUser user, long goodsId) {
 		if(user == null || goodsId <=0) {
 			return null;
@@ -81,7 +81,7 @@ public class MiaoshaService {
 		redisService.set(MiaoshaKey.getMiaoshaPath, ""+user.getNickname() + "_"+ goodsId, str);
 		return str;
 	}
-
+	// 生成验证码，同时将验证码的结果缓存到 redis 中
 	public BufferedImage createVerifyCode(MiaoshaUser user, long goodsId) {
 		if(user == null || goodsId <=0) {
 			return null;
@@ -177,7 +177,7 @@ public class MiaoshaService {
 			return 0;
 		}
 	}
-
+	// 校验用户输入的验证码，同时删除验证码结果
 	public boolean checkVerifyCode(MiaoshaUser user, long goodsId, int verifyCode) {
 		if(user == null || goodsId <=0) {
 			return false;
